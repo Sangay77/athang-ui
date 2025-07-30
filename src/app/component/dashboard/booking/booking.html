@@ -1,0 +1,15 @@
+<div class="container mt-4">
+  <h2>Book Your Ticket</h2>
+  
+  <button class="btn btn-primary" (click)="onBookTicket()" [disabled]="loading">
+    {{ loading ? 'Booking...' : 'Book Ticket' }}
+  </button>
+
+  <div *ngIf="bookingResponse" class="alert alert-success mt-3">
+    Booking Successful: {{ bookingResponse | json }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+</div>

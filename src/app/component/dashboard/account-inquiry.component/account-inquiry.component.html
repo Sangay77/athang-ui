@@ -1,0 +1,63 @@
+<div class="container mt-5" *ngIf="showForm">
+  <h2 class="mb-4 text-primary">Account Inquiry</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <!-- Bank Selection -->
+    <div class="mb-3">
+      <label for="bank" class="form-label fw-bold">Select Bank</label>
+      <select formControlName="bank" id="bank" class="form-select" required>
+        <option value="" disabled>Select a bank</option>
+        <option *ngFor="let bank of bankList" [value]="bank.code">
+          {{ bank.name }}
+        </option>
+      </select>
+      <div class="text-danger" *ngIf="form.get('bank')?.touched && form.get('bank')?.invalid">
+        Bank is required.
+      </div>
+    </div>
+
+    <!-- Account Number -->
+    <div class="mb-3">
+      <label for="accountNumber" class="form-label fw-bold">Account Number</label>
+      <input
+        type="text"
+        id="accountNumber"
+        class="form-control"
+        formControlName="accountNumber"
+        placeholder="Enter account number"
+        required
+      />
+      <div class="text-danger" *ngIf="form.get('accountNumber')?.touched && form.get('accountNumber')?.invalid">
+        Account number must be between 9 and 14 digits.
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+        <span *ngIf="!loading">Submit Inquiry</span>
+        <span *ngIf="loading">
+          <span class="spinner-border spinner-border-sm me-2"></span>Submitting...
+        </span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Inquiry Result -->
+  <div *ngIf="inquiryResult" class="card mt-4 border-success">
+    <div class="card-header bg-success text-white fw-bold">Inquiry Result</div>
+    <div class="card-body">
+      <pre>{{ inquiryResult | json }}</pre>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-4">
+    {{ errorMessage }}
+  </div>
+</div>
+
+<!-- Invalid Authorization Message -->
+<div *ngIf="!showForm" class="alert alert-warning mt-5">
+  Invalid authorization. Account inquiry form cannot be displayed.
+</div>

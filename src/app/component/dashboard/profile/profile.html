@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="card">
+    <h2>My Profile</h2>
+
+    <div class="avatar">
+      <img [src]="user.__imageUrl" alt="User Profile Picture" />
+    </div>
+
+    <form *ngIf="editMode; else viewMode">
+      <div class="form-group">
+        <label>First Name</label>
+        <input [(ngModel)]="user.__firstName" name="firstName" required />
+      </div>
+
+      <div class="form-group">
+        <label>Last Name</label>
+        <input [(ngModel)]="user.__lastName" name="lastName" required />
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input [(ngModel)]="user.__email" name="email" type="email" required />
+      </div>
+    </form>
+
+    <ng-template #viewMode>
+      <div class="view-field">
+        <label>First Name:</label>
+        <span>{{ user.__firstName }}</span>
+      </div>
+
+      <div class="view-field">
+        <label>Last Name:</label>
+        <span>{{ user.__lastName }}</span>
+      </div>
+
+      <div class="view-field">
+        <label>Email:</label>
+        <span>{{ user.__email }}</span>
+      </div>
+    </ng-template>
+
+    <div class="actions">
+      <button (click)="toggleEdit()" class="btn outline">
+        {{ editMode ? 'Cancel' : 'Edit' }}
+      </button>
+      <button *ngIf="editMode" (click)="saveChanges()" class="btn primary">
+        Save
+      </button>
+    </div>
+
+    <p class="message" *ngIf="successMessage">{{ successMessage }}</p>
+  </div>
+</div>

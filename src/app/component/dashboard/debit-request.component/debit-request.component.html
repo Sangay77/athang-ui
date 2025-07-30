@@ -1,0 +1,31 @@
+<div class="container p-4 shadow rounded bg-white mt-4">
+  <h3 class="text-center mb-4 text-primary fw-bold">Debit Request - Enter OTP</h3>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <label for="otp" class="form-label fw-semibold">One-Time Password (OTP)</label>
+      <input
+        id="otp"
+        type="text"
+        formControlName="otp"
+        class="form-control"
+        placeholder="Enter OTP"
+        maxlength="6"
+      />
+      <div *ngIf="form.get('otp')?.invalid && form.get('otp')?.touched" class="text-danger small mt-1">
+        Please enter a valid OTP (4-6 digits).
+      </div>
+    </div>
+
+    <button class="btn btn-primary w-100" type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? 'Processing...' : 'Submit' }}
+    </button>
+  </form>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success mt-3">
+    {{ successMessage }}
+  </div>
+</div>
