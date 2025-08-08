@@ -1,80 +1,116 @@
-<div class="content-area px-4 px-md-5 py-4 py-md-5">
-  <div *ngIf="successMessage" class="alert alert-success text-center rounded-pill">
-    {{ successMessage }}
-  </div>
-  <div *ngIf="errorMessage" class="alert alert-danger text-center rounded-pill">
-    {{ errorMessage }}
+<div class="card shadow">
+  <div class="card-top border-bottom text-center p-3">
+    <span id="logo" class="ms-3 fw-bold text-primary">Create Invoice</span>
   </div>
 
-  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="bg-white shadow rounded-4 p-4 p-md-5 mx-auto" style="max-width: 1000px;">
-    <h2 class="mb-4 fw-bold text-primary text-center">🧾 Create Invoice</h2>
+  <div class="card-body">
+    <div class="row">
+      <!-- Left column: Invoice Form -->
+      <div class="col-md-7">
+        <div class="left border p-4 rounded">
+          <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Recipient Name</label>
+              <input type="text" formControlName="recipientName" class="form-control"
+                [class.is-invalid]="invoiceForm.get('recipientName')?.invalid && invoiceForm.get('recipientName')?.touched" />
+              <div class="invalid-feedback">Recipient name is required.</div>
+            </div>
 
-    <div class="row g-4 mb-3">
-      <div class="col-md-6">
-        <label class="form-label fw-semibold">Recipient Name</label>
-        <input formControlName="recipientName" class="form-control rounded-pill shadow-sm" placeholder="Full Name" />
-        <div *ngIf="invoiceForm.get('recipientName')?.touched && invoiceForm.get('recipientName')?.invalid" class="text-danger small mt-1">
-          Recipient Name is required.
+            <div class="mb-3">
+              <label class="form-label">Recipient Email</label>
+              <input type="email" formControlName="recipientEmail" class="form-control"
+                [class.is-invalid]="invoiceForm.get('recipientEmail')?.invalid && invoiceForm.get('recipientEmail')?.touched" />
+              <div class="invalid-feedback">Please enter a valid email.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea formControlName="description" class="form-control"
+                [class.is-invalid]="invoiceForm.get('description')?.invalid && invoiceForm.get('description')?.touched"></textarea>
+              <div class="invalid-feedback">Description is required.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Due Date</label>
+              <input type="date" formControlName="dueDate" class="form-control"
+                [class.is-invalid]="invoiceForm.get('dueDate')?.invalid && invoiceForm.get('dueDate')?.touched" />
+              <div class="invalid-feedback">Please select a due date.</div>
+            </div>
+
+            <div formArrayName="items" *ngFor="let item of items.controls; let i = index" class="mb-3 border p-3 rounded">
+              <div [formGroupName]="i">
+                <div class="mb-2">
+                  <label class="form-label">Item Description</label>
+                  <input type="text" formControlName="description" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                  <label class="form-label">Quantity</label>
+                  <input type="number" formControlName="quantity" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                  <label class="form-label">Unit Price</label>
+                  <input type="number" formControlName="unitPrice" class="form-control" />
+                </div>
+
+                <button type="button" class="btn btn-danger btn-sm mt-2" (click)="removeItem(i)" *ngIf="items.length > 1">
+                  Remove
+                </button>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-3" (click)="addItem()">Add More Item</button>
+
+            <button type="submit" class="btn btn-success w-100 fw-bold" [disabled]="invoiceForm.invalid">
+              <i class="fas fa-file-invoice me-2"></i>Submit Invoice
+            </button>
+          </form>
         </div>
       </div>
 
-      <div class="col-md-6">
-        <label class="form-label fw-semibold">Recipient Email</label>
-        <input formControlName="recipientEmail" type="email" class="form-control rounded-pill shadow-sm" placeholder="example@mail.com" />
-        <div *ngIf="invoiceForm.get('recipientEmail')?.touched && invoiceForm.get('recipientEmail')?.invalid" class="text-danger small mt-1">
-          Enter a valid email.
+      <!-- Right column: Invoice Summary -->
+      <div class="col-md-5">
+        <div class="right border p-4 rounded">
+          <div class="header fs-5 fw-bold mb-3">Invoice Summary</div>
+
+          <div class="row lower mb-2">
+            <div class="col text-left">Recipient</div>
+            <div class="col text-right">{{ invoiceForm.value.recipientName || '-' }}</div>
+          </div>
+
+          <div class="row lower mb-2">
+            <div class="col text-left">Email</div>
+            <div class="col text-right">{{ invoiceForm.value.recipientEmail || '-' }}</div>
+          </div>
+
+          <div class="row lower mb-2">
+            <div class="col text-left">Due Date</div>
+            <div class="col text-right">{{ invoiceForm.value.dueDate || '-' }}</div>
+          </div>
+
+          <div class="row lower mb-2">
+            <div class="col text-left">Items</div>
+            <div class="col text-right">{{ items.length }}</div>
+          </div>
+
+          <div class="row lower mb-2">
+            <div class="col text-left">Total</div>
+            <div class="col text-right"><b>Nu. {{ getTotalAmount() | number:'1.2-2' }}</b></div>
+          </div>
+
+          <p class="text-muted text-center mt-3 small">Invoice will be emailed to the recipient.</p>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="mb-4">
-      <label class="form-label fw-semibold">Description</label>
-      <textarea formControlName="description" rows="2" class="form-control rounded shadow-sm" placeholder="Enter invoice description..."></textarea>
-    </div>
+<!-- Success / Error messages -->
+<div *ngIf="successMessage" class="alert alert-success text-center mt-4 rounded-pill shadow-sm">
+  ✅ {{ successMessage }}
+</div>
 
-    <div class="mb-5">
-      <label class="form-label fw-semibold">Due Date</label>
-      <input formControlName="dueDate" type="date" class="form-control rounded-pill shadow-sm" />
-    </div>
-
-    <h5 class="text-secondary mb-3 fw-semibold">Invoice Items</h5>
-
-    <div formArrayName="items">
-      <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="card mb-4 p-4 border-0 shadow-sm rounded-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="mb-0 fw-semibold text-primary">Item {{ i + 1 }}</h6>
-          <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 px-3 rounded-pill" (click)="removeItem(i)" [disabled]="items.length === 1">
-            <i class="bi bi-x-circle fs-5"></i> Remove
-          </button>
-        </div>
-
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Description</label>
-            <input formControlName="description" class="form-control rounded-pill shadow-sm" placeholder="e.g. Service charge" />
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-semibold">Quantity</label>
-            <input formControlName="quantity" type="number" min="1" class="form-control rounded-pill shadow-sm" />
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-semibold">Unit Price</label>
-            <input formControlName="unitPrice" type="number" step="0.01" min="0" class="form-control rounded-pill shadow-sm" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-end mb-4">
-      <button type="button" class="btn btn-outline-primary rounded-pill d-flex align-items-center gap-2 px-4" (click)="addItem()">
-        <i class="bi bi-plus-circle fs-5"></i> Add Item
-      </button>
-    </div>
-
-    <div class="text-center">
-      <button type="submit" class="btn btn-success rounded-pill px-5 py-2 fw-semibold shadow" style="font-size: 1.1rem;">
-        Submit Invoice
-      </button>
-    </div>
-  </form>
+<div *ngIf="errorMessage" class="alert alert-danger text-center mt-4 rounded-pill shadow-sm">
+  ❌ {{ errorMessage }}
 </div>

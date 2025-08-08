@@ -15,7 +15,7 @@ bookingResponse: any;
 
   constructor(private bookingService: BookingService) {}
 
-  onBookTicket(): void {
+  onTest(): void {
     this.loading = true;
     this.errorMessage = null;
     this.bookingService.bookTicket().subscribe({
@@ -24,7 +24,7 @@ bookingResponse: any;
         this.loading = false;
       },
       error: (err) => {
-        this.errorMessage = 'Booking failed!';
+        this.errorMessage = err.error;
         console.error(err);
         this.loading = false;
       }

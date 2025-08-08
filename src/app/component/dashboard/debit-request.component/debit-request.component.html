@@ -1,5 +1,9 @@
 <div class="container p-4 shadow rounded bg-white mt-4">
-  <h3 class="text-center mb-4 text-primary fw-bold">Debit Request - Enter OTP</h3>
+  <h3 class="text-center mb-4 text-primary fw-bold">Enter OTP</h3>
+
+  <div class="text-center mb-3 text-danger fw-bold" *ngIf="!timerExpired">
+    OTP expires in: <span class="text-warning">{{ timerDisplay }}</span>
+  </div>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="mb-3">
@@ -11,15 +15,21 @@
         class="form-control"
         placeholder="Enter OTP"
         maxlength="6"
+        [disabled]="timerExpired"
       />
       <div *ngIf="form.get('otp')?.invalid && form.get('otp')?.touched" class="text-danger small mt-1">
         Please enter a valid OTP (4-6 digits).
       </div>
     </div>
 
-    <button class="btn btn-primary w-100" type="submit" [disabled]="loading || form.invalid">
-      {{ loading ? 'Processing...' : 'Submit' }}
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary flex-grow-1" type="submit" [disabled]="loading || form.invalid || timerExpired">
+        {{ loading ? 'Processing...' : 'Submit' }}
+      </button>
+      <button class="btn btn-danger flex-grow-1" type="button" (click)="cancel()" [disabled]="loading">
+        Cancel
+      </button>
+    </div>
   </form>
 
   <div *ngIf="errorMessage" class="alert alert-danger mt-3">

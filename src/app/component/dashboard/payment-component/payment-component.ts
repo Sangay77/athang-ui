@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
 import { PaymentService } from '../../../services/payment.service';
-import { PaymentResponseService } from '../../../services/payment-response.service'; // <-- import
+import { PaymentResponseService } from '../../../services/payment-response.service';
 import { InvoiceRequest } from '../../../common/invoice-request.model';
 
 @Component({
@@ -22,10 +22,10 @@ export class PaymentComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router, // <-- inject Router
+    private router: Router,
     private invoiceService: InvoiceService,
     private paymentService: PaymentService,
-    private paymentResponseService: PaymentResponseService // <-- inject service
+    private paymentResponseService: PaymentResponseService
   ) { }
 
   ngOnInit(): void {
@@ -59,30 +59,36 @@ export class PaymentComponent implements OnInit {
     if (!this.invoice || !this.invoiceId) return;
 
     this.loading = true;
+    this.error = null; // Clear previous error before new attempt
 
     const totalAmount = this.invoice.items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
     const description = this.invoice.description;
 
     this.paymentService.authorizePayment(this.invoiceId, totalAmount, description).subscribe({
       next: (response) => {
-        console.log('Payment authorized successfully:', response);
-        alert('Payment authorized successfully!');
-
-        // Store response in shared service
-        this.paymentResponseService.setResponse(response);
-
-        // Navigate without query params
-        this.router.navigate(['/dashboard/account-inquiry']);
+        // Assume your backend returns 'status' as string and 'message'
+        if (response.status && response.status.toUpperCase() === 'FAILED') {
+          this.error = 'Payment failed: ' + (response.message || 'Unknown error');
+        } else if (response.bfs_responseCode === '00') {
+          // Success case
+          this.paymentResponseService.setResponse(response);
+          this.router.navigate(['/dashboard/account-inquiry']);
+        } else {
+          // Some other failure or warning from backend
+          this.error = 'Payment authorization failed: ' + (response.message || 'Unknown error');
+          console.warn('Authorization issue:', response);
+        }
       },
       error: (err) => {
+        this.error = 'Server error. Please try again later.';
         console.error('Authorization failed:', err);
-        alert('Authorization failed. Please try again.');
       },
       complete: () => {
         this.loading = false;
       }
     });
   }
+
   get totalAmount(): number {
     if (!this.invoice) return 0;
     return this.invoice.items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);

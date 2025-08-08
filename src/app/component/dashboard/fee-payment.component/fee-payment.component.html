@@ -1,0 +1,97 @@
+<div class="card shadow">
+  <div class="card-header text-center bg-white border-bottom py-3">
+    <h4 class="fw-bold text-primary mb-0">
+      <i class="fas fa-credit-card me-2"></i>Online Fee Payment
+    </h4>
+  </div>
+
+  <div class="card-body">
+    <div class="row g-4">
+      <!-- Left: Payment Form -->
+      <div class="col-md-7">
+        <div class="border rounded p-4 bg-light h-100">
+          <form [formGroup]="feeForm" (ngSubmit)="onSubmit()" novalidate>
+
+            <!-- Trainee Type -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Trainee Type</label>
+              <select formControlName="traineeType" class="form-select"
+                      [class.is-invalid]="feeForm.get('traineeType')?.invalid && feeForm.get('traineeType')?.touched">
+                <option value="" disabled>Select type</option>
+                <option value="student">Student</option>
+                <option value="professional">Professional</option>
+              </select>
+              <div class="invalid-feedback">Please select a trainee type.</div>
+            </div>
+
+            <!-- Fee Type -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Fee Type</label>
+              <select formControlName="feeType" class="form-select"
+                      [class.is-invalid]="feeForm.get('feeType')?.invalid && feeForm.get('feeType')?.touched">
+                <option value="" disabled>Select fee type</option>
+                <option value="registration">Registration</option>
+                <option value="monthly">Monthly</option>
+                <option value="exam">Exam</option>
+              </select>
+              <div class="invalid-feedback">Please select a fee type.</div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Amount (Nu.)</label>
+              <input type="number" formControlName="amount" class="form-control"
+                     placeholder="Enter amount"
+                     [class.is-invalid]="feeForm.get('amount')?.invalid && feeForm.get('amount')?.touched" />
+              <div class="invalid-feedback">Please enter a valid amount.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold" 
+                    [disabled]="feeForm.invalid || loading">
+              <ng-container *ngIf="!loading">
+                <i class="fas fa-wallet me-2"></i>Pay Now
+              </ng-container>
+              <ng-container *ngIf="loading">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processing...
+              </ng-container>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Fee Summary -->
+      <div class="col-md-5">
+        <div class="border rounded p-4 bg-white h-100">
+          <div class="fs-5 fw-bold mb-4 border-bottom pb-2">Fee Summary</div>
+
+          <div class="mb-2 d-flex justify-content-between">
+            <span class="text-muted">Trainee Type</span>
+            <span>{{ feeForm.value.traineeType || '-' }}</span>
+          </div>
+
+          <div class="mb-2 d-flex justify-content-between">
+            <span class="text-muted">Fee Type</span>
+            <span>{{ feeForm.value.feeType || '-' }}</span>
+          </div>
+
+          <div class="mb-2 d-flex justify-content-between fw-bold">
+            <span class="text-muted">Amount</span>
+            <span>Nu. {{ feeForm.value.amount || '0.00' }}</span>
+          </div>
+
+          <p class="text-muted text-center mt-4 small">🔐 Safe & Secure Payment Processing</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alerts -->
+<div *ngIf="successMessage" class="alert alert-success text-center mt-4 rounded-pill shadow-sm">
+  ✅ {{ successMessage }}
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger text-center mt-4 rounded-pill shadow-sm">
+  ❌ {{ errorMessage }}
+</div>

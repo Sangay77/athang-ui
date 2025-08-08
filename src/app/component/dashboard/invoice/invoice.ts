@@ -1,4 +1,3 @@
-// invoice.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
@@ -13,23 +12,25 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class InvoiceComponent implements OnInit {
-
   invoiceForm!: FormGroup;
   successMessage: string = '';
   errorMessage: string = '';
   createdInvoice: any = null;
 
-
-  constructor(private fb: FormBuilder, private invoiceService: InvoiceService,private router:Router) { }
+  constructor(
+    private fb: FormBuilder,
+    private invoiceService: InvoiceService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.invoiceForm = this.fb.group({
-      userId: [1, Validators.required],  // could be dynamic
+      userId: [1, Validators.required], // This should come from auth later
       recipientName: ['', Validators.required],
       recipientEmail: ['', [Validators.required, Validators.email]],
       description: [''],
       dueDate: ['', Validators.required],
-      items: this.fb.array([this.createItem()]) // at least one item to start
+      items: this.fb.array([this.createItem()])
     });
   }
 
@@ -37,57 +38,67 @@ export class InvoiceComponent implements OnInit {
     return this.fb.group({
       description: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1)]],
-      unitPrice: [0, [Validators.required, Validators.min(0)]],
+      unitPrice: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
-  get items() {
+  get items(): FormArray {
     return this.invoiceForm.get('items') as FormArray;
   }
 
-  addItem() {
+  addItem(): void {
     this.items.push(this.createItem());
   }
 
-  removeItem(index: number) {
+  removeItem(index: number): void {
     if (this.items.length > 1) {
       this.items.removeAt(index);
     }
   }
-onSubmit() {
-  if (this.invoiceForm.valid) {
-    this.successMessage = '';
-    this.errorMessage = '';
 
-    this.invoiceService.createInvoice(this.invoiceForm.value).subscribe({
-      next: (res) => {
-        console.log('Invoice created successfully', res);
-        this.successMessage = '✅ Invoice created successfully!';
-        this.createdInvoice = res;
-
-        // 🔁 Redirect to payment page with invoice ID or data (optional)
-        setTimeout(() => {
-          this.router.navigate(['/dashboard/payment'], {
-            queryParams: { invoiceId: res.id } // optional: pass invoiceId
-          });
-        }, 1000); // small delay for user to see success message
-      },
-      error: (err) => {
-        console.error('Error creating invoice:', err);
-        this.errorMessage = '❌ Failed to create invoice. Please try again later.';
-      },
-      complete: () => {
-        this.invoiceForm.reset();
-
-        while (this.items.length !== 1) {
-          this.items.removeAt(0);
-        }
-      }
-    });
-  } else {
-    console.warn('Form not valid');
-    this.invoiceForm.markAllAsTouched();
-    this.errorMessage = '❌ Form not valid! Please check the fields.';
+  getTotalAmount(): number {
+    return this.items.controls.reduce((acc, item) => {
+      const qty = item.get('quantity')?.value || 0;
+      const price = item.get('unitPrice')?.value || 0;
+      return acc + qty * price;
+    }, 0);
   }
-}
+
+  onSubmit(): void {
+    if (this.invoiceForm.valid) {
+      this.successMessage = '';
+      this.errorMessage = '';
+
+      const invoiceData = {
+        ...this.invoiceForm.value,
+        amount: this.getTotalAmount()
+      };
+
+      this.invoiceService.createInvoice(invoiceData).subscribe({
+        next: (res) => {
+          this.successMessage = '✅ Invoice created successfully!';
+          this.createdInvoice = res;
+
+          setTimeout(() => {
+            this.router.navigate(['/dashboard/payment'], {
+              queryParams: { invoiceId: res.id }
+            });
+          }, 1000);
+        },
+        error: (err) => {
+          console.error('Error creating invoice:', err);
+          this.errorMessage = '❌ Failed to create invoice. Please try again later.';
+        },
+        complete: () => {
+          this.invoiceForm.reset();
+          while (this.items.length !== 1) {
+            this.items.removeAt(0);
+          }
+        }
+      });
+    } else {
+      this.invoiceForm.markAllAsTouched();
+      this.errorMessage = '❌ Form not valid! Please check the fields.';
+    }
+  }
 }

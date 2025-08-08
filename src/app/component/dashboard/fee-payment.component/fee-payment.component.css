@@ -1,0 +1,195 @@
+/* General Layout */
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(0, 0, 34);
+    font-size: 0.8rem;
+}
+
+.card {
+    max-width: 1000px;
+    margin: 2vh;
+}
+
+.card-top {
+    padding: 0.7rem 5rem;
+}
+
+.card-top a {
+    float: left;
+    margin-top: 0.7rem;
+    font-weight: 500;
+}
+
+#logo {
+    font-family: 'Dancing Script', cursive;
+    font-weight: bold;
+    font-size: 1.6rem;
+    color: white;
+}
+
+/* Card Body Background */
+.card-body {
+    padding: 0 5rem 5rem 5rem;
+    /* background-image: url("https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg"); */
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 0 1rem 1rem 1rem;
+    }
+
+    .card-top {
+        padding: 0.7rem 1rem;
+    }
+}
+
+.row {
+    margin: 0;
+}
+
+.upper {
+    padding: 1rem 0;
+    justify-content: space-evenly;
+}
+
+#three {
+    border-radius: 1rem;
+    width: 22px;
+    height: 22px;
+    margin-right: 3px;
+    border: 1px solid blue;
+    text-align: center;
+    display: inline-block;
+}
+
+#payment {
+    margin: 0;
+    color: blue;
+    font-weight: bold;
+}
+
+/* Icon container */
+.icons {
+    margin-left: auto;
+}
+
+form span {
+    color: rgb(179, 179, 179);
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+form {
+    padding: 2vh 0;
+}
+
+input,
+select {
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+    border-radius: 4px;
+}
+
+input:focus::placeholder,
+select:focus::placeholder {
+    color: transparent;
+}
+
+input:focus,
+select:focus {
+    border-color: rgb(0, 0, 34);
+    box-shadow: 0 0 0 0.1rem rgba(23, 4, 189, 0.25);
+}
+
+/* Header Text */
+.header {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Left Section (Form) */
+.left {
+    background-color: #ffffff;
+    padding: 2vh;
+    border-radius: 8px;
+}
+
+.left img {
+    width: 2rem;
+}
+
+.left .col-4 {
+    padding-left: 0;
+}
+
+/* Right Section (Summary) */
+.right {
+    background-color: #ffffff;
+    padding: 2vh;
+    border-radius: 8px;
+}
+
+.right .item {
+    padding: 0.3rem 0;
+}
+
+.col-8 {
+    padding: 0 1vh;
+}
+
+.lower {
+    line-height: 2;
+    font-size: 0.9rem;
+}
+
+/* Button Styles */
+.btn {
+    background-color: rgb(23, 4, 189);
+    border-color: rgb(23, 4, 189);
+    color: white;
+    width: 100%;
+    font-size: 0.8rem;
+    margin: 4vh 0 1.5vh 0;
+    padding: 1.5vh;
+    border-radius: 0.5rem;
+    font-weight: bold;
+}
+
+.btn:focus {
+    box-shadow: none;
+    outline: none;
+    -webkit-user-select: none;
+    transition: none;
+}
+
+.btn:hover {
+    color: white;
+    background-color: rgb(19, 0, 160);
+    border-color: rgb(19, 0, 160);
+}
+
+/* Link Styles */
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+/* Checkbox Fix */
+input[type=checkbox] {
+    width: unset;
+    margin-bottom: unset;
+}

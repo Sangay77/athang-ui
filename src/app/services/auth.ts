@@ -1,11 +1,11 @@
 // src/app/services/auth.service.ts
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // corrected import
 
 interface JwtPayload {
   sub?: string;
@@ -30,11 +30,10 @@ export class AuthService {
     }).pipe(
       map(response => {
         if (response && response.token) {
-
           const decoded = jwtDecode<JwtPayload>(response.token);
           const username = decoded.sub || decoded.fullName || 'Unknown';
-
           localStorage.setItem('user', JSON.stringify({ username }));
+          localStorage.setItem('jwtToken', response.token);
           return response.token;
         } else {
           throw new Error('Authentication failed: No token received');
@@ -47,26 +46,41 @@ export class AuthService {
     );
   }
 
+  // New register method
+  register(formData: FormData): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}/auth/register`, formData, {
+      withCredentials: true
+    }).pipe(
+      catchError(error => {
+        console.error('Registration error:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  activateAccount(token: string): Observable<any> {
+    const params = new HttpParams().set('token', token);
+    return this.httpClient.get(`${this.baseUrl}/auth/activate-account`, { params });
+  }
+
   getCurrentUser(): any {
     const userJson = localStorage.getItem('user');
     return userJson ? JSON.parse(userJson) : null;
   }
 
-
   getToken(): string | null {
-  return localStorage.getItem('token');
-}
+    return localStorage.getItem('jwtToken');
+  }
 
- logout(): void {
-  this.httpClient.post(`${this.baseUrl}/api/v1/logout`, {}, { withCredentials: true }).subscribe({
-    next: () => {
-      localStorage.clear();
-      this.router.navigate(['/login']);
-    },
-    error: () => {
-      this.router.navigate(['/login']);
-    }
-  });
-}
-
+  logout(): void {
+    this.httpClient.post(`${this.baseUrl}/api/v1/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => {
+        localStorage.clear();
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 }

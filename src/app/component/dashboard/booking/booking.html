@@ -1,12 +1,12 @@
 <div class="container mt-4">
-  <h2>Book Your Ticket</h2>
+  <h2>TEST BACKEND API</h2>
   
-  <button class="btn btn-primary" (click)="onBookTicket()" [disabled]="loading">
-    {{ loading ? 'Booking...' : 'Book Ticket' }}
+  <button class="btn btn-primary" (click)="onTest()" [disabled]="loading">
+    {{ loading ? 'testing api...' : 'Test BackEnd' }}
   </button>
 
   <div *ngIf="bookingResponse" class="alert alert-success mt-3">
-    Booking Successful: {{ bookingResponse | json }}
+    TEST SUCCESSFULL: {{ bookingResponse | json }}
   </div>
 
   <div *ngIf="errorMessage" class="alert alert-danger mt-3">

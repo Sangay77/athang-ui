@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-  loginWithGoogle(): void {
+  loginWithAthang(): void {
 
     window.location.href = 'http://localhost:8083/api/v1/oauth2/authorization/my-idp'
 

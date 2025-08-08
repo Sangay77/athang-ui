@@ -9,10 +9,15 @@ import { PaymentComponent } from './component/dashboard/payment-component/paymen
 import { AccountInquiryComponent } from './component/dashboard/account-inquiry.component/account-inquiry.component';
 import { DebitRequestComponent } from './component/dashboard/debit-request.component/debit-request.component';
 import { InvoiceSummaryComponent } from './component/dashboard/invoice-summary.component/invoice-summary.component';
+import { RegisterComponent } from './component/register-component/register-component';
+import { ActivateAccountComponent } from './component/activate.account.component/activate.account.component';
+import { FeePaymentComponent } from './component/dashboard/fee-payment.component/fee-payment.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'activate-account', component: ActivateAccountComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'oauth2/redirect', component: Oauth2RedirectComponent },
 
   {
@@ -23,10 +28,10 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'invoice', component: InvoiceComponent },
       { path: 'payment', component: PaymentComponent },
+      { path: 'fee-payment', component: FeePaymentComponent },
       { path: 'account-inquiry', component: AccountInquiryComponent },
       { path: 'debit-request', component: DebitRequestComponent },
       { path: 'invoice-summary', component: InvoiceSummaryComponent }
-
 
     ]
   }];

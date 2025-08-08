@@ -32,24 +32,31 @@
       </div>
     </div>
 
-    <!-- Submit Button -->
-    <div class="d-grid">
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+    <!-- Buttons -->
+    <div class="d-flex gap-3">
+      <button
+        *ngIf="!inquiryFailed"
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || loading"
+      >
         <span *ngIf="!loading">Submit Inquiry</span>
         <span *ngIf="loading">
           <span class="spinner-border spinner-border-sm me-2"></span>Submitting...
         </span>
       </button>
+
+      <!-- Retry and Cancel shown only if failed -->
+      <div *ngIf="inquiryFailed" class="d-flex gap-2">
+        <button type="button" class="btn btn-warning" (click)="retry()">Retry</button>
+        <button type="button" class="btn btn-danger" (click)="onCancel()">Cancel</button>
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="clearForm()">
+        Clear
+      </button>
     </div>
   </form>
-
-  <!-- Inquiry Result -->
-  <div *ngIf="inquiryResult" class="card mt-4 border-success">
-    <div class="card-header bg-success text-white fw-bold">Inquiry Result</div>
-    <div class="card-body">
-      <pre>{{ inquiryResult | json }}</pre>
-    </div>
-  </div>
 
   <!-- Error Message -->
   <div *ngIf="errorMessage" class="alert alert-danger mt-4">

@@ -14,7 +14,7 @@ export class BookingService {
   }
 
   bookTicket(): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/home`, { withCredentials: true });
+    return this.httpClient.post(`${this.baseUrl}/auth/test`, { withCredentials: true });
   }
   
 }
